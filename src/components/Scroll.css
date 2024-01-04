@@ -1,0 +1,29 @@
+.main-scroll
+{
+  margin-top: 10px;
+}
+.main-scroll h1{
+  text-align: center;
+}
+.scrollmenu {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    white-space: nowrap;
+  }
+  .ScrollProduct {
+    margin-right: 40px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  .ScrollProduct:hover
+  {
+    transform: scale(1.005);
+    box-shadow: 5px 5px 16px grey;
+    border-radius: 10px;
+  }
+
+  .scrollmenu::-webkit-scrollbar {
+    width: 0px; 
+  }
+ 
