@@ -6,10 +6,11 @@ import { emailValidator, passwordValidator } from './LoginValidator';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 export default function Login() {
-  const [input, setInput] = React.useState({ email: '', password: '' });
+  const [input, setInput] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -23,17 +24,30 @@ export default function Login() {
     setErrorMessage('');
   };
 
-  const formSubmitter = (e) => {
+  const formSubmitter = async (e) => {
     e.preventDefault();
 
     if (!emailValidator(input.email)) return setErrorMessage('Enter valid Details');
     if (!passwordValidator(input.password)) return setErrorMessage('Wrong password');
 
-  
-    login({ name: input.username });
+    try {
+      const response = await axios.post('https://localhost:8080/login', {
+        email: input.email,
+        password: input.password
+      });
 
-   
-    navigate('/');
+      // Assuming your backend returns a token upon successful login
+      const token = response.data.token;
+      // Now you can perform actions like setting the token in localStorage, etc.
+      
+      // Call your login function from AuthContext, if needed
+      login({ name: input.username });
+
+      navigate('/'); // Redirect to homepage after successful login
+    } catch (error) {
+      console.error('Login failed:', error);
+      notify(); // Notify user of login failure
+    }
   };
 
   return (
@@ -46,9 +60,6 @@ export default function Login() {
         <div className='inputs'>
           {errorMessage.length > 0 && <div style={{ marginBottom: '3px', color: 'red' }}>{errorMessage}</div>}
 
-          <div className='input'>
-            <input type='text' placeholder='Username' name='username' onChange={handleChange} />
-          </div>
           <div className='input'>
             <input type='text' placeholder='Email' name='email' onChange={handleChange} />
           </div>
@@ -68,7 +79,7 @@ export default function Login() {
         </div>
 
         <div className='submit-container'>
-          <button type='submit' onClick={notify}>Login</button>
+          <button type='submit'>Login</button>
           <ToastContainer />
         </div>
       </form>
